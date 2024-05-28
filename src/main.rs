@@ -1,4 +1,4 @@
-use std::collections::{HashMap};
+use std::{collections::HashMap, num::ParseIntError};
 
 
 //CONSTANTES
@@ -42,15 +42,28 @@ fn main() {
 
         //OBTENEMOS LAS COMBINACIONES DE LOS VALORES UNICOS DE CADA HEADER
         values = values_combinations(header_one_values, header_two_values);
-        println!("Combinatoria de los valores únicos de {:?} y {:?}:", headers[0], headers[1]);
+        println!("Combinatoria de los valores únicos de NX:{:?} y NY:{:?}:", headers[0], headers[1]);
         
         for value in &values {
             
-            //CANTIDAD DE OCURRENCIAS DE VALUE EN LA COLUMNA DE HEADER[0] Y HEADER[1] EN EL DATAFRAME
-            let count_header_one = count_occurrences(&df, &headers[0], &value[0]);
-            let count_header_two = count_occurrences(&df, &headers[1], &value[1]);
-            // println!("Ocurrencias en {:?}: {:?} y en {:?}: {:?}\n", headers[0], count_header_one, headers[1], count_header_two);
-            println!("{}: {count_header_one}, {}: {count_header_two}", value[0], value[1]);
+            //OCURRENCIAS DE VALUE EN LA COLUMNA DE HEADER[0] Y HEADER[1] EN EL DATAFRAME
+            let ocurrences_header_one = filter_occurrences(&df, &headers[0], &value[0]);
+            let ocurrences_header_two = filter_occurrences(&df, &headers[1], &value[1]);
+            let count_header_one = ocurrences_header_one.get(&headers[0]).unwrap().len();
+            let count_header_two = ocurrences_header_two.get(&headers[1]).unwrap().len();
+            let total_data = df.get(&headers[0]).unwrap().len();
+            
+            // CANTIDAD DE OCURRENCIAS DE LA COMBINACIÓN DE VALUE EN EL DATAFRAME (NX^Y)
+            let ocurrences_combined = filter_combined_occurrences(&df, &df, &headers[0], &value[0], &headers[1], &value[1]);
+            let nx_y = ocurrences_combined.get(&headers[0]).unwrap().len();
+
+            //SOPORTE DE LA COMBINACIÓN DE VALUE
+            let support = nx_y as f64 / total_data as f64;
+            
+            // println!("{:?}",ocurrences_header_one);
+            
+
+            println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}", value[0], value[1]);
         }
 
         all_combination_values.push(values);
@@ -59,17 +72,55 @@ fn main() {
     
 }
 //FUNCIONES
-fn count_occurrences(df: &HashMap<String, Vec<String>>, header: &String, value: &String) -> i32 {
-    let mut count = 0;
-    let values = df.get(header).unwrap();
-    for val in values {
-        if val == value {
-            count += 1;
+
+// FUNCION QUE DEVUELVE UN DATAFRAME CON LAS OCURRENCIAS DE UNA COMBINACIÓN DE VALORES EN DOS DATAFRAMES
+fn filter_combined_occurrences(
+    df1: &HashMap<String, Vec<String>>,
+    df2: &HashMap<String, Vec<String>>,
+    header1: &String,
+    value1: &String,
+    header2: &String,
+    value2: &String
+) -> HashMap<String, Vec<String>> {
+    let mut result: HashMap<String, Vec<String>> = HashMap::new();
+    
+    // Inicializa las columnas en el nuevo dataframe
+    result.insert(header1.clone(), Vec::new());
+    result.insert(header2.clone(), Vec::new());
+
+    if let (Some(values1), Some(values2)) = (df1.get(header1), df2.get(header2)) {
+        for (val1, val2) in values1.iter().zip(values2) {
+            if val1 == value1 && val2 == value2 {
+                result.get_mut(header1).unwrap().push(val1.clone());
+                result.get_mut(header2).unwrap().push(val2.clone());
+            }
         }
     }
-    count
+    
+    result
 }
 
+
+//FUNCION QUE FILTRA LAS OCURRENCIAS DE UN VALOR EN UNA COLUMNA
+fn filter_occurrences(df: &HashMap<String, Vec<String>>, header: &String, value: &String) -> HashMap<String, Vec<String>> {
+    let mut result: HashMap<String, Vec<String>> = HashMap::new();
+    
+    // Inicializa la columna en el nuevo dataframe
+    result.insert(header.clone(), Vec::new());
+
+    if let Some(values) = df.get(header) {
+        for val in values {
+            if val == value {
+                result.get_mut(header).unwrap().push(val.clone());
+            }
+        }
+    }
+    
+    result
+}
+
+
+//FUNCION QUE OBTIENE LAS COMBINACIONES DE LOS VALORES UNICOS DE DOS HEADERS
 fn values_combinations(header_one_values: &Vec<String>, header_two_values: &Vec<String>) -> Vec<Vec<String>> {
     let mut values: Vec<Vec<String>> = Vec::new();
     for value_one in header_one_values {
@@ -80,6 +131,7 @@ fn values_combinations(header_one_values: &Vec<String>, header_two_values: &Vec<
     values
 }
 
+//FUNCION QUE OBTIENE LA COMBINATORIA DE UN VECTOR DE STRINGS
 fn combine(elements: &Vec<String>, start: usize, result: &mut Vec<Vec<String>>) {
     let n = elements.len();
     for i in start..n {
@@ -91,7 +143,7 @@ fn combine(elements: &Vec<String>, start: usize, result: &mut Vec<Vec<String>>) 
     }
 }
 
-//FUNCIONES
+//FUNCION QUE OBTIENE LOS VALORES UNICOS DE CADA HEADER
 fn get_unique_values(df: &HashMap<String, Vec<String>>) -> HashMap<String, Vec<String>> {
     let mut unique_values: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -108,6 +160,7 @@ fn get_unique_values(df: &HashMap<String, Vec<String>>) -> HashMap<String, Vec<S
     unique_values
 }
 
+//FUNCION QUE LEE UN CSV Y LO GUARDA EN UN HASHMAP
 fn read_csv(df: &mut HashMap<String, Vec<String>>, path: &str, headers: &mut Vec<String>) {
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(true)
