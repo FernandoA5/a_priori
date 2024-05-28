@@ -1,9 +1,9 @@
-use std::{collections::HashMap, num::ParseIntError};
+use std::collections::HashMap;
 
 
 //CONSTANTES
 const PATH: &str = "src/dataset.csv";
-
+const MIN_SUPPORT: f64 = 0.5;
 
 fn main() {
     let mut df: HashMap<String, Vec<String>> = HashMap::new();
@@ -25,8 +25,6 @@ fn main() {
     combine(&headers, 0, &mut result_headers);
     println!("Combinatoria de los Headers: \n{:?}\n", result_headers);
 
-    //COMBINATORIA DE LOS VALORES UNICOS DE LA COMBINATORIA DE LOS HEADERS USEMOS UNA FUNCION
-    let mut result_values: Vec<Vec<String>> = Vec::new();
 
     println!("Valores únicos: \n{:?}\n\n", unique_values);
 
@@ -35,13 +33,12 @@ fn main() {
     //PARA CADA HEADER EN LA COMBINATORIA DE LOS HEADERS
     for headers in result_headers {
         //COMBINATORIA DE LOS VALORES UNICOS DE CADA HEADER
-        let mut values: Vec<Vec<String>> = Vec::new();
         //OBTENEMOS LOS VALORES UNICOS DE CADA HEADER
         let header_one_values = unique_values.get(&headers[0]).unwrap();
         let header_two_values = unique_values.get(&headers[1]).unwrap();
 
         //OBTENEMOS LAS COMBINACIONES DE LOS VALORES UNICOS DE CADA HEADER
-        values = values_combinations(header_one_values, header_two_values);
+        let values: Vec<Vec<String>> = values_combinations(header_one_values, header_two_values);
         println!("Combinatoria de los valores únicos de NX:{:?} y NY:{:?}:", headers[0], headers[1]);
         
         for value in &values {
@@ -59,11 +56,17 @@ fn main() {
 
             //SOPORTE DE LA COMBINACIÓN DE VALUE
             let support = nx_y as f64 / total_data as f64;
-            
+
+            //CONFIANZA DE LA COMBINACIÓN DE VALUE
+            let confidence = nx_y as f64 / count_header_one as f64;
+
+            //CORRELACIÓN DE LA COMBINACIÓN DE VALUE
+            let lift = (nx_y as f64 * total_data as f64) / (count_header_one as f64 * count_header_two as f64);
+
             // println!("{:?}",ocurrences_header_one);
             
 
-            println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}", value[0], value[1]);
+            println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
         }
 
         all_combination_values.push(values);
