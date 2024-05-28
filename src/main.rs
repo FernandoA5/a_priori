@@ -30,6 +30,7 @@ fn main() {
 
     println!("Valores únicos: \n{:?}\n\n", unique_values);
 
+    let mut all_combination_values: Vec<Vec<Vec<String>>> = Vec::new();
 
     //PARA CADA HEADER EN LA COMBINATORIA DE LOS HEADERS
     for headers in result_headers {
@@ -41,19 +42,34 @@ fn main() {
 
         //OBTENEMOS LAS COMBINACIONES DE LOS VALORES UNICOS DE CADA HEADER
         values = values_combinations(header_one_values, header_two_values);
-        println!("Combinatoria de los valores únicos de {:?} y {:?}: \n{:?}\n", headers[0], headers[1], values);
-
+        println!("Combinatoria de los valores únicos de {:?} y {:?}:", headers[0], headers[1]);
         
+        for value in &values {
+            
+            //CANTIDAD DE OCURRENCIAS DE VALUE EN LA COLUMNA DE HEADER[0] Y HEADER[1] EN EL DATAFRAME
+            let count_header_one = count_occurrences(&df, &headers[0], &value[0]);
+            let count_header_two = count_occurrences(&df, &headers[1], &value[1]);
+            // println!("Ocurrencias en {:?}: {:?} y en {:?}: {:?}\n", headers[0], count_header_one, headers[1], count_header_two);
+            println!("{}: {count_header_one}, {}: {count_header_two}", value[0], value[1]);
+        }
 
-        // combine(&headers, 0, &mut values);
-        // println!("{:?}\n", values);
+        all_combination_values.push(values);
     }
-
-    
 
     
 }
 //FUNCIONES
+fn count_occurrences(df: &HashMap<String, Vec<String>>, header: &String, value: &String) -> i32 {
+    let mut count = 0;
+    let values = df.get(header).unwrap();
+    for val in values {
+        if val == value {
+            count += 1;
+        }
+    }
+    count
+}
+
 fn values_combinations(header_one_values: &Vec<String>, header_two_values: &Vec<String>) -> Vec<Vec<String>> {
     let mut values: Vec<Vec<String>> = Vec::new();
     for value_one in header_one_values {
@@ -67,8 +83,10 @@ fn values_combinations(header_one_values: &Vec<String>, header_two_values: &Vec<
 fn combine(elements: &Vec<String>, start: usize, result: &mut Vec<Vec<String>>) {
     let n = elements.len();
     for i in start..n {
-        for j in (i+1)..n {
-            result.push(vec![elements[i].clone(), elements[j].clone()]);
+        for j in start..n {
+            if i != j {
+                result.push(vec![elements[i].clone(), elements[j].clone()]);
+            }
         }
     }
 }
