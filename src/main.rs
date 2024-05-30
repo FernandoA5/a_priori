@@ -28,7 +28,8 @@ fn main() {
 
     println!("Valores únicos: \n{:?}\n\n", unique_values);
 
-    let mut all_combination_values: Vec<Vec<Vec<String>>> = Vec::new();
+    let mut reglas_asociacion: Vec<String> = Vec::new();
+
 
     //PARA CADA HEADER EN LA COMBINATORIA DE LOS HEADERS
     for headers in result_headers {
@@ -67,11 +68,22 @@ fn main() {
             
 
             println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
-        }
 
-        all_combination_values.push(values);
+            //CONSERVAR LAS REGLAS DE ASOCIACIÓN QUE CUMPLAN CON EL SOPORTE MÍNIMO
+            if support >= MIN_SUPPORT {
+                let regla = format!("{}:{}-{}:{}", headers[0], value[0],headers[1], value[1]);
+                // println!("Regla: {regla}");
+                reglas_asociacion.push(regla);
+            }
+        }
     }
 
+    println!("\n\n");
+    //REGLAS DE SEGUNDO, TERCER, etc, GRADO
+    println!("{:?}", reglas_asociacion);
+
+
+    
     
 }
 //FUNCIONES
