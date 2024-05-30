@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, process::exit};
+
 
 
 //CONSTANTES
@@ -8,13 +9,19 @@ const MIN_SUPPORT: f64 = 0.5;
 fn main() {
     let mut df: HashMap<String, Vec<String>> = HashMap::new();
 
+    //ARCHIVO DE SALIDA (EL NOMBRE DEL ARCHIVO USARÁ EL NOMBRE DEL DATASET + FECHA Y HORA DE EJECUCIÓN)
+    let timestamp = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+    //EXTRAEMOS EL NOMBRE DEL DATASET
+    let dataset_name = PATH.split("/").last().unwrap().split(".").next().unwrap();
+    let output_file = format!("src/{}_{}.txt", dataset_name, timestamp);
+
+
+
 
     //LEEMOS EL CSV
     let mut headers: Vec<String> = Vec::new();
 
     read_csv(&mut df, PATH, &mut headers);
-    // println!("{:?}", headers);
-    // println!("{:?}", df);
 
     //OBTENEMOS LOS DIFERENTES VALORES DE CADA VECTOR
     let unique_values = get_unique_values(&df);
@@ -24,9 +31,11 @@ fn main() {
     let mut result_headers: Vec<Vec<String>> = Vec::new();
     combine(&headers, 0, &mut result_headers);
     println!("Combinatoria de los Headers: \n{:?}\n", result_headers);
+    write_to_file(&format!("Combinatoria de los Headers: \n{:?}\n", result_headers), &output_file);
 
 
     println!("Valores únicos: \n{:?}\n\n", unique_values);
+    write_to_file(&format!("Valores únicos: \n{:?}\n\n", unique_values), &output_file);
 
     let mut reglas_asociacion: Vec<String> = Vec::new();
 
@@ -41,6 +50,7 @@ fn main() {
         //OBTENEMOS LAS COMBINACIONES DE LOS VALORES UNICOS DE CADA HEADER
         let values: Vec<Vec<String>> = values_combinations(header_one_values, header_two_values);
         println!("Combinatoria de los valores únicos de NX:{:?} y NY:{:?}:", headers[0], headers[1]);
+        write_to_file(&format!("Combinatoria de los valores únicos de NX:{:?} y NY:{:?}:\n", headers[0], headers[1]), &output_file);
         
         for value in &values {
             
@@ -52,12 +62,12 @@ fn main() {
             let total_data = df.get(&headers[0]).unwrap().len();
             
             // CANTIDAD DE OCURRENCIAS DE LA COMBINACIÓN DE VALUE EN EL DATAFRAME (NX^Y)
-            let ocurrences_combined = recursive_filter_combined_occurrences(
-                vec![&df, &df],
-                vec![(headers[0].clone(), value[0].clone()), (headers[1].clone(), value[1].clone())]
-            );
-
-            let nx_y = ocurrences_combined.get(&headers[0]).unwrap().len();
+            // let ocurrences_combined = recursive_filter_combined_occurrences(
+            //     vec![&df, &df],
+            //     vec![(headers[0].clone(), value[0].clone()), (headers[1].clone(), value[1].clone())]
+            // );
+            // let nx_y = ocurrences_combined.get(&headers[0]).unwrap().len();
+            let nx_y = find_matching_rows(&df, vec![(headers[0].clone(), value[0].clone()), (headers[1].clone(), value[1].clone())]).len();
 
             //SOPORTE DE LA COMBINACIÓN DE VALUE
             let support = nx_y as f64 / total_data as f64;
@@ -69,6 +79,7 @@ fn main() {
             let lift = (nx_y as f64 * total_data as f64) / (count_header_one as f64 * count_header_two as f64);
 
             println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
+            write_to_file(&format!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}\n", value[0], value[1], count_header_one=count_header_one, count_header_two=count_header_two, nx_y=nx_y, support=support, confidence=confidence, lift=lift), &output_file);
 
             //CONSERVAR LAS REGLAS DE ASOCIACIÓN QUE CUMPLAN CON EL SOPORTE MÍNIMO
             if support >= MIN_SUPPORT {
@@ -80,11 +91,12 @@ fn main() {
     }
 
     println!("\n\n");
-
+    write_to_file("\n\n", &output_file);
 
     //REGLAS DE SEGUNDO, TERCER, etc, GRADO
     // println!("{:?}", reglas_asociacion);
     println!("Reglas que cumplen con el soporte mínimo:\n{:?}\n", reglas_asociacion);
+    write_to_file(&format!("Reglas que cumplen con el soporte mínimo:\n{:?}\n", reglas_asociacion), &output_file);
     //AQUÍ EMPEZAMOS EL CÓDIGO QUE ITERARÁ SOBRE EL NESIMO GRADO DE REGLAS DE ASOCIACIÓN
     let num_headers = headers.len();
 
@@ -100,7 +112,9 @@ fn main() {
 
         //IMPRIMIMOS LAS NUVEAS REGLAS DE ASOCIACIÓN EN UN FORMATO CONVENIENTE
         println!("\nReglas de asociación de grado {}: ", i);
+        write_to_file(&format!("\nReglas de asociación de grado {}: \n", i), &output_file);
         let nomenclature = Vec::from(["NX", "NY"]);
+        let mut new_reglas_asociacion: Vec<String> = Vec::new();
         
         for rule in &combined_rules {
             //FORMAMOS LA STRING TITUAR DE LA REGLA DE ASOCIACIÓN. TIPO: "NX:VALOR-NY:VALOR-NZ:VALOR"
@@ -120,11 +134,18 @@ fn main() {
             rule_string.truncate(rule_string.len() - 3);
             //IMPRIMIMOS LA REGLA DE ASOCIACIÓN
             println!("{}", rule_string);
+            write_to_file(&format!("{}\n", rule_string), &output_file);
             //SO:
             
-            //AHORA SÍ, CALCULAMOS EL SOPORTE, CONFIANZA Y LIFT DE LA REGLA DE ASOCIACIÓN
+            //AHORA SÍ, CALCULAMOS LAS APARICIONES NX Y NY DE LA REGLA DE ASOCIACIÓN
             //PARA CALCULAR EL NX, RECORREMOS EL rule[0].
+            let mut nx_ocurrences:u64 = 0;
             //PARA CALCULAR EL NY, RECORREMOS EL rule[1]
+            let mut ny_ocurrences:u64 = 0;
+            //A PRIORI, ESTE CICLO SE EJECUTA SOLO 2 VECES SIN IMPORTAR QUÉ.
+            let nomenclature = Vec::from(["NX", "NY"]);
+            let mut indice:usize=0;
+            let mut string_result = String::new();
             for part in rule {
                 //PARA CADA PAR HEADER-VALOR EN LA REGLA DE ASOCIACIÓN
                 let mut set_of_headers: Vec<String> = Vec::new();
@@ -133,18 +154,93 @@ fn main() {
                     set_of_headers.push(header_value[0].clone());
                     set_of_values.push(header_value[1].clone());
                 }
-                println!("HEADERS: {:?}", set_of_headers);
+                // println!("HEADERS: {:?}", set_of_headers);
+                //CREAMOS EL VECTOR DE CONDICIONES PARA LA FUNCIÓN recursive_filter_combined_occurrences
+                let mut conditions_vec: Vec<(String, String)> = Vec::new();
+                for i in 0..part.len(){
+                    conditions_vec.push((set_of_headers[i].clone(), set_of_values[i].clone()));
+                }
 
-                let ocurrences_combined = recursive_filter_combined_occurrences(
-                    vec![&df, &df],
-                    vec![(set_of_headers[0].clone(), set_of_values[0].clone()), (set_of_headers[1].clone(), set_of_values[1].clone())]
-                );
-                let nx = ocurrences_combined.get(&set_of_headers[0]).unwrap().len();
-                println!("NX: {}", nx);
-                println!("");
+                let result = find_matching_rows(&df, conditions_vec).len();
+
+                if indice == 0 {
+                    nx_ocurrences = result as u64;
+                } else {
+                    ny_ocurrences = result as u64;
+                }
+                let format_string = format!("{}:{result}, ", nomenclature[indice]);                
+                string_result.push_str(&format_string);
+                indice += 1;
+            }
+            string_result.truncate(string_result.len() - 2);
+
+            //CALCULAMOS EL NX^Y
+            //OBTENEMOS LA LISTA DE PARES HEADER-VALOR DE LA REGLA DE ASOCIACIÓN
+            let mut set_of_headers: Vec<String> = Vec::new();
+            let mut set_of_values: Vec<String> = Vec::new();
+            for part in rule{
+                for header_value in part{
+                    set_of_headers.push(header_value[0].clone());
+                    set_of_values.push(header_value[1].clone());
+                }
+            }
+            //CREAMOS EL VECTOR DE CONDICIONES PARA LA FUNCIÓN recursive_filter_combined_occurrences
+            let mut conditions_vec: Vec<(String, String)> = Vec::new();
+            for i in 0..set_of_headers.len(){
+                conditions_vec.push((set_of_headers[i].clone(), set_of_values[i].clone()));
+            }
+            // println!("{:?}", conditions_vec);
+            let ocurrences_combined = find_matching_rows(&df, conditions_vec);
+            let nx_y = ocurrences_combined.len() as u64;
+            //AGREGAMOS EL RESULTADO DE NX^Y A LA STRING DE RESULTADOS
+            string_result.push_str(&format!(", NX^Y: {}", nx_y));
+
+            //CALCULAMOS EL SOPORTE DE LA REGLA DE ASOCIACIÓN
+            let total_data = df.get(&set_of_headers[0]).unwrap().len();
+            let support = nx_y as f64 / total_data as f64;
+            //AGREGAMOS EL RESULTADO DE SOPORTE A LA STRING DE RESULTADOS
+            string_result.push_str(&format!(", S: {}", support));
+
+            //CALCULAMOS LA CONFIANZA DE LA REGLA DE ASOCIACIÓN
+            let confidence = nx_y as f64 / nx_ocurrences as f64;
+            //AGREGAMOS EL RESULTADO DE CONFIANZA A LA STRING DE RESULTADOS
+            string_result.push_str(&format!(", C: {}", confidence));
+
+            //CALCULAMOS EL LIFT DE LA REGLA DE ASOCIACIÓN
+            let lift = (nx_y as f64 * total_data as f64) / (nx_ocurrences as f64 * ny_ocurrences as f64);
+            //AGREGAMOS EL RESULTADO DE LIFT A LA STRING DE RESULTADOS
+            string_result.push_str(&format!(", L: {}", lift));
+
+            //IMPRIMIMOS EL RESULTADO DE LAS APARICIONES DE NX Y NY
+            println!("{}", string_result);
+            write_to_file(&format!("{}\n", string_result), &output_file);
+
+            //CONSERVAR LAS REGLAS DE ASOCIACIÓN QUE CUMPLAN CON EL SOPORTE MÍNIMO
+            if support >= MIN_SUPPORT {
+                let regla = format!("{}:{}-{}:{}", set_of_headers[0], set_of_values[0],set_of_headers[1], set_of_values[1]);
+                // println!("Regla: {regla}");
+                new_reglas_asociacion.push(regla);
             }
 
-            
+        }
+        //ACTUALIZAMOS LAS REGLAS DE ASOCIACIÓN
+        reglas_asociacion = new_reglas_asociacion;
+        
+        
+        //CRITERIO DE PARO TEMPORAL: SI EL VECTOR DE PARES HEADER-VALOR DE LA REGLA DE ASOCIACIÓN ES IGUAL O MAYOR AL TOTAL DE HEADERS, SE DETIENE EL CICLO
+        
+        //CALCULAMOS EL SET_OF_HEADERS DE LA REGLA DE ASOCIACIÓN
+        let mut set_of_headers: Vec<String> = Vec::new();
+        for rule in &unbundled_rules {
+            for header_value in rule{
+                set_of_headers.push(header_value[0].clone());
+            }
+        }
+        // println!("SET OF HEADERS: {:?}", set_of_headers);
+        if set_of_headers.len() >= num_headers {
+            println!("\nSe han encontrado todas las reglas de asociación posibles.");
+            write_to_file("\nSe han encontrado todas las reglas de asociación posibles.", &output_file);
+            exit(0);
         }
         // for rule in &unbundled_rules {
         //     //CADA RULE CONTIENE N HEADERS Y N VALORES.
@@ -217,7 +313,33 @@ fn _filter_combined_occurrences(
     result
 }
 
-fn recursive_filter_combined_occurrences(
+fn find_matching_rows(
+    dataframe: &HashMap<String, Vec<String>>,
+    conditions: Vec<(String, String)>,
+) -> Vec<usize> {
+    // Verificar que todas las columnas en condiciones existen en el dataframe
+    for (header, _) in &conditions {
+        if !dataframe.contains_key(header) {
+            return vec![]; // Si falta alguna columna, no se puede encontrar ninguna coincidencia
+        }
+    }
+
+    // Inicializar vector de índices coincidentes con los índices de la primera condición
+    let (first_header, first_value) = &conditions[0];
+    let initial_indices: Vec<usize> = dataframe[first_header]
+        .iter()
+        .enumerate()
+        .filter_map(|(i, v)| if v == first_value { Some(i) } else { None })
+        .collect();
+
+    // Filtrar índices iniciales con el resto de condiciones
+    conditions.iter().skip(1).fold(initial_indices, |mut indices, (header, value)| {
+        indices.retain(|&i| dataframe[header].get(i) == Some(value));
+        indices
+    })
+}
+
+fn _recursive_filter_combined_occurrences(
     dfs: Vec<&HashMap<String, Vec<String>>>,
     conditions: Vec<(String, String)>
 ) -> HashMap<String, Vec<String>> {
@@ -344,4 +466,20 @@ fn read_csv(df: &mut HashMap<String, Vec<String>>, path: &str, headers: &mut Vec
             df.entry(header).or_insert_with(Vec::new).push(col.to_string());
         }
     }
+}
+
+
+//FUNCIÓN QUE RECIBE UNA CADENA DE TEXTO Y LA ESCRIBE AL FINAL DE UN ARCHIVO, LO CREA SI NO EXISTE
+fn write_to_file(text: &str, path: &str) {
+    use std::fs::OpenOptions;
+    use std::io::Write;
+
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .append(true)
+        .open(path)
+        .unwrap();
+
+    file.write_all(text.as_bytes()).unwrap();
 }

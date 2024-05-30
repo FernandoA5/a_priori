@@ -1,0 +1,195 @@
+Combinatoria de los Headers: 
+[["HeartDisease", "BMI"], ["HeartDisease", "Smoking"], ["HeartDisease", "AlcoholDrinking"], ["HeartDisease", "Stroke"], ["BMI", "HeartDisease"], ["BMI", "Smoking"], ["BMI", "AlcoholDrinking"], ["BMI", "Stroke"], ["Smoking", "HeartDisease"], ["Smoking", "BMI"], ["Smoking", "AlcoholDrinking"], ["Smoking", "Stroke"], ["AlcoholDrinking", "HeartDisease"], ["AlcoholDrinking", "BMI"], ["AlcoholDrinking", "Smoking"], ["AlcoholDrinking", "Stroke"], ["Stroke", "HeartDisease"], ["Stroke", "BMI"], ["Stroke", "Smoking"], ["Stroke", "AlcoholDrinking"]]
+Valores únicos: 
+{"Smoking": ["No", "Yes"], "BMI": ["Saludable", "Sobrepeso", "Obesidad", "Bajo peso"], "AlcoholDrinking": ["No", "Yes", "NA"], "HeartDisease": ["No", "Yes"], "Stroke": ["Yes", "No"]}
+
+Combinatoria de los valores únicos de NX:"HeartDisease" y NY:"BMI":
+NX=No: 44, NY=Saludable: 14, NX^Y:13, S:0.26, C: 0.29545454545454547, L: 1.0551948051948052
+NX=No: 44, NY=Sobrepeso: 21, NX^Y:19, S:0.38, C: 0.4318181818181818, L: 1.0281385281385282
+NX=No: 44, NY=Obesidad: 13, NX^Y:10, S:0.2, C: 0.22727272727272727, L: 0.8741258741258742
+NX=No: 44, NY=Bajo peso: 2, NX^Y:2, S:0.04, C: 0.045454545454545456, L: 1.1363636363636365
+NX=Yes: 6, NY=Saludable: 14, NX^Y:1, S:0.02, C: 0.16666666666666666, L: 0.5952380952380952
+NX=Yes: 6, NY=Sobrepeso: 21, NX^Y:2, S:0.04, C: 0.3333333333333333, L: 0.7936507936507936
+NX=Yes: 6, NY=Obesidad: 13, NX^Y:3, S:0.06, C: 0.5, L: 1.9230769230769231
+NX=Yes: 6, NY=Bajo peso: 2, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"HeartDisease" y NY:"Smoking":
+NX=No: 44, NY=No: 25, NX^Y:24, S:0.48, C: 0.5454545454545454, L: 1.0909090909090908
+NX=No: 44, NY=Yes: 25, NX^Y:20, S:0.4, C: 0.45454545454545453, L: 0.9090909090909091
+NX=Yes: 6, NY=No: 25, NX^Y:1, S:0.02, C: 0.16666666666666666, L: 0.3333333333333333
+NX=Yes: 6, NY=Yes: 25, NX^Y:5, S:0.1, C: 0.8333333333333334, L: 1.6666666666666667
+Combinatoria de los valores únicos de NX:"HeartDisease" y NY:"AlcoholDrinking":
+NX=No: 44, NY=No: 46, NX^Y:40, S:0.8, C: 0.9090909090909091, L: 0.9881422924901185
+NX=No: 44, NY=Yes: 3, NX^Y:3, S:0.06, C: 0.06818181818181818, L: 1.1363636363636365
+NX=No: 44, NY=NA: 1, NX^Y:1, S:0.02, C: 0.022727272727272728, L: 1.1363636363636365
+NX=Yes: 6, NY=No: 46, NX^Y:6, S:0.12, C: 1, L: 1.0869565217391304
+NX=Yes: 6, NY=Yes: 3, NX^Y:0, S:0, C: 0, L: 0
+NX=Yes: 6, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"HeartDisease" y NY:"Stroke":
+NX=No: 44, NY=Yes: 4, NX^Y:3, S:0.06, C: 0.06818181818181818, L: 0.8522727272727273
+NX=No: 44, NY=No: 46, NX^Y:41, S:0.82, C: 0.9318181818181818, L: 1.0128458498023716
+NX=Yes: 6, NY=Yes: 4, NX^Y:1, S:0.02, C: 0.16666666666666666, L: 2.0833333333333335
+NX=Yes: 6, NY=No: 46, NX^Y:5, S:0.1, C: 0.8333333333333334, L: 0.9057971014492754
+Combinatoria de los valores únicos de NX:"BMI" y NY:"HeartDisease":
+NX=Saludable: 14, NY=No: 44, NX^Y:13, S:0.26, C: 0.9285714285714286, L: 1.0551948051948052
+NX=Saludable: 14, NY=Yes: 6, NX^Y:1, S:0.02, C: 0.07142857142857142, L: 0.5952380952380952
+NX=Sobrepeso: 21, NY=No: 44, NX^Y:19, S:0.38, C: 0.9047619047619048, L: 1.0281385281385282
+NX=Sobrepeso: 21, NY=Yes: 6, NX^Y:2, S:0.04, C: 0.09523809523809523, L: 0.7936507936507936
+NX=Obesidad: 13, NY=No: 44, NX^Y:10, S:0.2, C: 0.7692307692307693, L: 0.8741258741258742
+NX=Obesidad: 13, NY=Yes: 6, NX^Y:3, S:0.06, C: 0.23076923076923078, L: 1.9230769230769231
+NX=Bajo peso: 2, NY=No: 44, NX^Y:2, S:0.04, C: 1, L: 1.1363636363636365
+NX=Bajo peso: 2, NY=Yes: 6, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"BMI" y NY:"Smoking":
+NX=Saludable: 14, NY=No: 25, NX^Y:9, S:0.18, C: 0.6428571428571429, L: 1.2857142857142858
+NX=Saludable: 14, NY=Yes: 25, NX^Y:5, S:0.1, C: 0.35714285714285715, L: 0.7142857142857143
+NX=Sobrepeso: 21, NY=No: 25, NX^Y:9, S:0.18, C: 0.42857142857142855, L: 0.8571428571428571
+NX=Sobrepeso: 21, NY=Yes: 25, NX^Y:12, S:0.24, C: 0.5714285714285714, L: 1.1428571428571428
+NX=Obesidad: 13, NY=No: 25, NX^Y:6, S:0.12, C: 0.46153846153846156, L: 0.9230769230769231
+NX=Obesidad: 13, NY=Yes: 25, NX^Y:7, S:0.14, C: 0.5384615384615384, L: 1.0769230769230769
+NX=Bajo peso: 2, NY=No: 25, NX^Y:1, S:0.02, C: 0.5, L: 1
+NX=Bajo peso: 2, NY=Yes: 25, NX^Y:1, S:0.02, C: 0.5, L: 1
+Combinatoria de los valores únicos de NX:"BMI" y NY:"AlcoholDrinking":
+NX=Saludable: 14, NY=No: 46, NX^Y:13, S:0.26, C: 0.9285714285714286, L: 1.0093167701863355
+NX=Saludable: 14, NY=Yes: 3, NX^Y:1, S:0.02, C: 0.07142857142857142, L: 1.1904761904761905
+NX=Saludable: 14, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+NX=Sobrepeso: 21, NY=No: 46, NX^Y:20, S:0.4, C: 0.9523809523809523, L: 1.0351966873706004
+NX=Sobrepeso: 21, NY=Yes: 3, NX^Y:1, S:0.02, C: 0.047619047619047616, L: 0.7936507936507936
+NX=Sobrepeso: 21, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+NX=Obesidad: 13, NY=No: 46, NX^Y:11, S:0.22, C: 0.8461538461538461, L: 0.919732441471572
+NX=Obesidad: 13, NY=Yes: 3, NX^Y:1, S:0.02, C: 0.07692307692307693, L: 1.2820512820512822
+NX=Obesidad: 13, NY=NA: 1, NX^Y:1, S:0.02, C: 0.07692307692307693, L: 3.8461538461538463
+NX=Bajo peso: 2, NY=No: 46, NX^Y:2, S:0.04, C: 1, L: 1.0869565217391304
+NX=Bajo peso: 2, NY=Yes: 3, NX^Y:0, S:0, C: 0, L: 0
+NX=Bajo peso: 2, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"BMI" y NY:"Stroke":
+NX=Saludable: 14, NY=Yes: 4, NX^Y:2, S:0.04, C: 0.14285714285714285, L: 1.7857142857142858
+NX=Saludable: 14, NY=No: 46, NX^Y:12, S:0.24, C: 0.8571428571428571, L: 0.9316770186335404
+NX=Sobrepeso: 21, NY=Yes: 4, NX^Y:1, S:0.02, C: 0.047619047619047616, L: 0.5952380952380952
+NX=Sobrepeso: 21, NY=No: 46, NX^Y:20, S:0.4, C: 0.9523809523809523, L: 1.0351966873706004
+NX=Obesidad: 13, NY=Yes: 4, NX^Y:1, S:0.02, C: 0.07692307692307693, L: 0.9615384615384616
+NX=Obesidad: 13, NY=No: 46, NX^Y:12, S:0.24, C: 0.9230769230769231, L: 1.0033444816053512
+NX=Bajo peso: 2, NY=Yes: 4, NX^Y:0, S:0, C: 0, L: 0
+NX=Bajo peso: 2, NY=No: 46, NX^Y:2, S:0.04, C: 1, L: 1.0869565217391304
+Combinatoria de los valores únicos de NX:"Smoking" y NY:"HeartDisease":
+NX=No: 25, NY=No: 44, NX^Y:24, S:0.48, C: 0.96, L: 1.0909090909090908
+NX=No: 25, NY=Yes: 6, NX^Y:1, S:0.02, C: 0.04, L: 0.3333333333333333
+NX=Yes: 25, NY=No: 44, NX^Y:20, S:0.4, C: 0.8, L: 0.9090909090909091
+NX=Yes: 25, NY=Yes: 6, NX^Y:5, S:0.1, C: 0.2, L: 1.6666666666666667
+Combinatoria de los valores únicos de NX:"Smoking" y NY:"BMI":
+NX=No: 25, NY=Saludable: 14, NX^Y:9, S:0.18, C: 0.36, L: 1.2857142857142858
+NX=No: 25, NY=Sobrepeso: 21, NX^Y:9, S:0.18, C: 0.36, L: 0.8571428571428571
+NX=No: 25, NY=Obesidad: 13, NX^Y:6, S:0.12, C: 0.24, L: 0.9230769230769231
+NX=No: 25, NY=Bajo peso: 2, NX^Y:1, S:0.02, C: 0.04, L: 1
+NX=Yes: 25, NY=Saludable: 14, NX^Y:5, S:0.1, C: 0.2, L: 0.7142857142857143
+NX=Yes: 25, NY=Sobrepeso: 21, NX^Y:12, S:0.24, C: 0.48, L: 1.1428571428571428
+NX=Yes: 25, NY=Obesidad: 13, NX^Y:7, S:0.14, C: 0.28, L: 1.0769230769230769
+NX=Yes: 25, NY=Bajo peso: 2, NX^Y:1, S:0.02, C: 0.04, L: 1
+Combinatoria de los valores únicos de NX:"Smoking" y NY:"AlcoholDrinking":
+NX=No: 25, NY=No: 46, NX^Y:22, S:0.44, C: 0.88, L: 0.9565217391304348
+NX=No: 25, NY=Yes: 3, NX^Y:2, S:0.04, C: 0.08, L: 1.3333333333333333
+NX=No: 25, NY=NA: 1, NX^Y:1, S:0.02, C: 0.04, L: 2
+NX=Yes: 25, NY=No: 46, NX^Y:24, S:0.48, C: 0.96, L: 1.0434782608695652
+NX=Yes: 25, NY=Yes: 3, NX^Y:1, S:0.02, C: 0.04, L: 0.6666666666666666
+NX=Yes: 25, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"Smoking" y NY:"Stroke":
+NX=No: 25, NY=Yes: 4, NX^Y:1, S:0.02, C: 0.04, L: 0.5
+NX=No: 25, NY=No: 46, NX^Y:24, S:0.48, C: 0.96, L: 1.0434782608695652
+NX=Yes: 25, NY=Yes: 4, NX^Y:3, S:0.06, C: 0.12, L: 1.5
+NX=Yes: 25, NY=No: 46, NX^Y:22, S:0.44, C: 0.88, L: 0.9565217391304348
+Combinatoria de los valores únicos de NX:"AlcoholDrinking" y NY:"HeartDisease":
+NX=No: 46, NY=No: 44, NX^Y:40, S:0.8, C: 0.8695652173913043, L: 0.9881422924901185
+NX=No: 46, NY=Yes: 6, NX^Y:6, S:0.12, C: 0.13043478260869565, L: 1.0869565217391304
+NX=Yes: 3, NY=No: 44, NX^Y:3, S:0.06, C: 1, L: 1.1363636363636365
+NX=Yes: 3, NY=Yes: 6, NX^Y:0, S:0, C: 0, L: 0
+NX=NA: 1, NY=No: 44, NX^Y:1, S:0.02, C: 1, L: 1.1363636363636365
+NX=NA: 1, NY=Yes: 6, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"AlcoholDrinking" y NY:"BMI":
+NX=No: 46, NY=Saludable: 14, NX^Y:13, S:0.26, C: 0.2826086956521739, L: 1.0093167701863355
+NX=No: 46, NY=Sobrepeso: 21, NX^Y:20, S:0.4, C: 0.43478260869565216, L: 1.0351966873706004
+NX=No: 46, NY=Obesidad: 13, NX^Y:11, S:0.22, C: 0.2391304347826087, L: 0.919732441471572
+NX=No: 46, NY=Bajo peso: 2, NX^Y:2, S:0.04, C: 0.043478260869565216, L: 1.0869565217391304
+NX=Yes: 3, NY=Saludable: 14, NX^Y:1, S:0.02, C: 0.3333333333333333, L: 1.1904761904761905
+NX=Yes: 3, NY=Sobrepeso: 21, NX^Y:1, S:0.02, C: 0.3333333333333333, L: 0.7936507936507936
+NX=Yes: 3, NY=Obesidad: 13, NX^Y:1, S:0.02, C: 0.3333333333333333, L: 1.2820512820512822
+NX=Yes: 3, NY=Bajo peso: 2, NX^Y:0, S:0, C: 0, L: 0
+NX=NA: 1, NY=Saludable: 14, NX^Y:0, S:0, C: 0, L: 0
+NX=NA: 1, NY=Sobrepeso: 21, NX^Y:0, S:0, C: 0, L: 0
+NX=NA: 1, NY=Obesidad: 13, NX^Y:1, S:0.02, C: 1, L: 3.8461538461538463
+NX=NA: 1, NY=Bajo peso: 2, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"AlcoholDrinking" y NY:"Smoking":
+NX=No: 46, NY=No: 25, NX^Y:22, S:0.44, C: 0.4782608695652174, L: 0.9565217391304348
+NX=No: 46, NY=Yes: 25, NX^Y:24, S:0.48, C: 0.5217391304347826, L: 1.0434782608695652
+NX=Yes: 3, NY=No: 25, NX^Y:2, S:0.04, C: 0.6666666666666666, L: 1.3333333333333333
+NX=Yes: 3, NY=Yes: 25, NX^Y:1, S:0.02, C: 0.3333333333333333, L: 0.6666666666666666
+NX=NA: 1, NY=No: 25, NX^Y:1, S:0.02, C: 1, L: 2
+NX=NA: 1, NY=Yes: 25, NX^Y:0, S:0, C: 0, L: 0
+Combinatoria de los valores únicos de NX:"AlcoholDrinking" y NY:"Stroke":
+NX=No: 46, NY=Yes: 4, NX^Y:4, S:0.08, C: 0.08695652173913043, L: 1.0869565217391304
+NX=No: 46, NY=No: 46, NX^Y:42, S:0.84, C: 0.9130434782608695, L: 0.9924385633270322
+NX=Yes: 3, NY=Yes: 4, NX^Y:0, S:0, C: 0, L: 0
+NX=Yes: 3, NY=No: 46, NX^Y:3, S:0.06, C: 1, L: 1.0869565217391304
+NX=NA: 1, NY=Yes: 4, NX^Y:0, S:0, C: 0, L: 0
+NX=NA: 1, NY=No: 46, NX^Y:1, S:0.02, C: 1, L: 1.0869565217391304
+Combinatoria de los valores únicos de NX:"Stroke" y NY:"HeartDisease":
+NX=Yes: 4, NY=No: 44, NX^Y:3, S:0.06, C: 0.75, L: 0.8522727272727273
+NX=Yes: 4, NY=Yes: 6, NX^Y:1, S:0.02, C: 0.25, L: 2.0833333333333335
+NX=No: 46, NY=No: 44, NX^Y:41, S:0.82, C: 0.8913043478260869, L: 1.0128458498023716
+NX=No: 46, NY=Yes: 6, NX^Y:5, S:0.1, C: 0.10869565217391304, L: 0.9057971014492754
+Combinatoria de los valores únicos de NX:"Stroke" y NY:"BMI":
+NX=Yes: 4, NY=Saludable: 14, NX^Y:2, S:0.04, C: 0.5, L: 1.7857142857142858
+NX=Yes: 4, NY=Sobrepeso: 21, NX^Y:1, S:0.02, C: 0.25, L: 0.5952380952380952
+NX=Yes: 4, NY=Obesidad: 13, NX^Y:1, S:0.02, C: 0.25, L: 0.9615384615384616
+NX=Yes: 4, NY=Bajo peso: 2, NX^Y:0, S:0, C: 0, L: 0
+NX=No: 46, NY=Saludable: 14, NX^Y:12, S:0.24, C: 0.2608695652173913, L: 0.9316770186335404
+NX=No: 46, NY=Sobrepeso: 21, NX^Y:20, S:0.4, C: 0.43478260869565216, L: 1.0351966873706004
+NX=No: 46, NY=Obesidad: 13, NX^Y:12, S:0.24, C: 0.2608695652173913, L: 1.0033444816053512
+NX=No: 46, NY=Bajo peso: 2, NX^Y:2, S:0.04, C: 0.043478260869565216, L: 1.0869565217391304
+Combinatoria de los valores únicos de NX:"Stroke" y NY:"Smoking":
+NX=Yes: 4, NY=No: 25, NX^Y:1, S:0.02, C: 0.25, L: 0.5
+NX=Yes: 4, NY=Yes: 25, NX^Y:3, S:0.06, C: 0.75, L: 1.5
+NX=No: 46, NY=No: 25, NX^Y:24, S:0.48, C: 0.5217391304347826, L: 1.0434782608695652
+NX=No: 46, NY=Yes: 25, NX^Y:22, S:0.44, C: 0.4782608695652174, L: 0.9565217391304348
+Combinatoria de los valores únicos de NX:"Stroke" y NY:"AlcoholDrinking":
+NX=Yes: 4, NY=No: 46, NX^Y:4, S:0.08, C: 1, L: 1.0869565217391304
+NX=Yes: 4, NY=Yes: 3, NX^Y:0, S:0, C: 0, L: 0
+NX=Yes: 4, NY=NA: 1, NX^Y:0, S:0, C: 0, L: 0
+NX=No: 46, NY=No: 46, NX^Y:42, S:0.84, C: 0.9130434782608695, L: 0.9924385633270322
+NX=No: 46, NY=Yes: 3, NX^Y:3, S:0.06, C: 0.06521739130434782, L: 1.0869565217391304
+NX=No: 46, NY=NA: 1, NX^Y:1, S:0.02, C: 0.021739130434782608, L: 1.0869565217391304
+
+
+Reglas que cumplen con el soporte mínimo:
+["HeartDisease:No-AlcoholDrinking:No", "HeartDisease:No-Stroke:No", "AlcoholDrinking:No-HeartDisease:No", "AlcoholDrinking:No-Stroke:No", "Stroke:No-HeartDisease:No", "Stroke:No-AlcoholDrinking:No"]
+
+Reglas de asociación de grado 2: 
+NX=(HeartDisease:No - AlcoholDrinking:No) & NY=(HeartDisease:No - Stroke:No)
+NX:40, NY:41, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1280487804878048
+NX=(HeartDisease:No - AlcoholDrinking:No) & NY=(AlcoholDrinking:No - HeartDisease:No)
+NX:40, NY:40, NX^Y: 40, S: 0.8, C: 1, L: 1.25
+NX=(HeartDisease:No - AlcoholDrinking:No) & NY=(AlcoholDrinking:No - Stroke:No)
+NX:40, NY:42, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1011904761904763
+NX=(HeartDisease:No - AlcoholDrinking:No) & NY=(Stroke:No - HeartDisease:No)
+NX:40, NY:41, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1280487804878048
+NX=(HeartDisease:No - AlcoholDrinking:No) & NY=(Stroke:No - AlcoholDrinking:No)
+NX:40, NY:42, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1011904761904763
+NX=(HeartDisease:No - Stroke:No) & NY=(AlcoholDrinking:No - HeartDisease:No)
+NX:41, NY:40, NX^Y: 37, S: 0.74, C: 0.9024390243902439, L: 1.1280487804878048
+NX=(HeartDisease:No - Stroke:No) & NY=(AlcoholDrinking:No - Stroke:No)
+NX:41, NY:42, NX^Y: 37, S: 0.74, C: 0.9024390243902439, L: 1.0743321718931476
+NX=(HeartDisease:No - Stroke:No) & NY=(Stroke:No - HeartDisease:No)
+NX:41, NY:41, NX^Y: 41, S: 0.82, C: 1, L: 1.2195121951219512
+NX=(HeartDisease:No - Stroke:No) & NY=(Stroke:No - AlcoholDrinking:No)
+NX:41, NY:42, NX^Y: 37, S: 0.74, C: 0.9024390243902439, L: 1.0743321718931476
+NX=(AlcoholDrinking:No - HeartDisease:No) & NY=(AlcoholDrinking:No - Stroke:No)
+NX:40, NY:42, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1011904761904763
+NX=(AlcoholDrinking:No - HeartDisease:No) & NY=(Stroke:No - HeartDisease:No)
+NX:40, NY:41, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1280487804878048
+NX=(AlcoholDrinking:No - HeartDisease:No) & NY=(Stroke:No - AlcoholDrinking:No)
+NX:40, NY:42, NX^Y: 37, S: 0.74, C: 0.925, L: 1.1011904761904763
+NX=(AlcoholDrinking:No - Stroke:No) & NY=(Stroke:No - HeartDisease:No)
+NX:42, NY:41, NX^Y: 37, S: 0.74, C: 0.8809523809523809, L: 1.0743321718931476
+NX=(AlcoholDrinking:No - Stroke:No) & NY=(Stroke:No - AlcoholDrinking:No)
+NX:42, NY:42, NX^Y: 42, S: 0.84, C: 1, L: 1.1904761904761905
+NX=(Stroke:No - HeartDisease:No) & NY=(Stroke:No - AlcoholDrinking:No)
+NX:41, NY:42, NX^Y: 37, S: 0.74, C: 0.9024390243902439, L: 1.0743321718931476
+
+Se han encontrado todas las reglas de asociación posibles.
