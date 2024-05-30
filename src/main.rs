@@ -67,7 +67,7 @@ fn main() {
             // println!("{:?}",ocurrences_header_one);
             
 
-            println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
+            // println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
 
             //CONSERVAR LAS REGLAS DE ASOCIACIÓN QUE CUMPLAN CON EL SOPORTE MÍNIMO
             if support >= MIN_SUPPORT {
@@ -81,12 +81,28 @@ fn main() {
     println!("\n\n");
     //REGLAS DE SEGUNDO, TERCER, etc, GRADO
     println!("{:?}", reglas_asociacion);
+    //AQUÍ EMPEZAMOS EL CÓDIGO QUE ITERARÁ SOBRE EL NESIMO GRADO DE REGLAS DE ASOCIACIÓN
+    let num_headers = headers.len();
+    for i in 2..num_headers {
+        let mut new_reglas_asociacion: Vec<String> = Vec::new();
+        //EXTRAEMOS LOS VALORES Y HEADERS DE LAS REGLAS DE ASOCIACIÓN ANTERIORES
+        get_rules_info(&reglas_asociacion);
+    }
 
 
     
     
 }
 //FUNCIONES
+
+fn get_rules_info(rules: &Vec<String>) -> Vec<Vec<String>> {
+    let mut rules_info: Vec<Vec<String>> = Vec::new();
+    for rule in rules {
+        let rule_info: Vec<String> = rule.split("-").map(|s| s.to_string()).collect();
+        rules_info.push(rule_info);
+    }
+    rules_info
+}
 
 // FUNCION QUE DEVUELVE UN DATAFRAME CON LAS OCURRENCIAS DE UNA COMBINACIÓN DE VALORES EN DOS DATAFRAMES
 fn filter_combined_occurrences(
