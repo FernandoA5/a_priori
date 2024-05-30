@@ -52,7 +52,11 @@ fn main() {
             let total_data = df.get(&headers[0]).unwrap().len();
             
             // CANTIDAD DE OCURRENCIAS DE LA COMBINACIÓN DE VALUE EN EL DATAFRAME (NX^Y)
-            let ocurrences_combined = filter_combined_occurrences(&df, &df, &headers[0], &value[0], &headers[1], &value[1]);
+            let ocurrences_combined = recursive_filter_combined_occurrences(
+                vec![&df, &df],
+                vec![(headers[0].clone(), value[0].clone()), (headers[1].clone(), value[1].clone())]
+            );
+
             let nx_y = ocurrences_combined.get(&headers[0]).unwrap().len();
 
             //SOPORTE DE LA COMBINACIÓN DE VALUE
@@ -64,10 +68,7 @@ fn main() {
             //CORRELACIÓN DE LA COMBINACIÓN DE VALUE
             let lift = (nx_y as f64 * total_data as f64) / (count_header_one as f64 * count_header_two as f64);
 
-            // println!("{:?}",ocurrences_header_one);
-            
-
-            // println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
+            println!("NX={}: {count_header_one}, NY={}: {count_header_two}, NX^Y:{nx_y}, S:{support}, C: {confidence}, L: {lift}", value[0], value[1]);
 
             //CONSERVAR LAS REGLAS DE ASOCIACIÓN QUE CUMPLAN CON EL SOPORTE MÍNIMO
             if support >= MIN_SUPPORT {
@@ -79,14 +80,76 @@ fn main() {
     }
 
     println!("\n\n");
+
+
     //REGLAS DE SEGUNDO, TERCER, etc, GRADO
-    println!("{:?}", reglas_asociacion);
+    // println!("{:?}", reglas_asociacion);
+    println!("Reglas que cumplen con el soporte mínimo:\n{:?}\n", reglas_asociacion);
     //AQUÍ EMPEZAMOS EL CÓDIGO QUE ITERARÁ SOBRE EL NESIMO GRADO DE REGLAS DE ASOCIACIÓN
     let num_headers = headers.len();
+
+
     for i in 2..num_headers {
-        let mut new_reglas_asociacion: Vec<String> = Vec::new();
         //EXTRAEMOS LOS VALORES Y HEADERS DE LAS REGLAS DE ASOCIACIÓN ANTERIORES
-        get_rules_info(&reglas_asociacion);
+        //ESTO DEVUELVE UNA COLECCIÓN DE REGLAS DE ASOCIACIÓN DESAGREGADAS EN HEADERS Y VALORES
+        let unbundled_rules: Vec<Vec<Vec<String>>> = get_rules_info(&reglas_asociacion);
+        //CREAMOS LA COMBINATORIA DE LOS HEADERS-VALORES DE LAS REGLAS DE ASOCIACIÓN ANTERIORES
+        //(UNA COMBINACION DE VEC<VEC<STRING>>) POR CADA REGLA DE ASOCIACIÓN
+        let combined_rules = combine_superior_rules(&unbundled_rules);
+        
+
+        //IMPRIMIMOS LAS NUVEAS REGLAS DE ASOCIACIÓN EN UN FORMATO CONVENIENTE
+        println!("\nReglas de asociación de grado {}: ", i);
+        let nomenclature = Vec::from(["NX", "NY"]);
+        
+        for rule in &combined_rules {
+            //FORMAMOS LA STRING TITUAR DE LA REGLA DE ASOCIACIÓN. TIPO: "NX:VALOR-NY:VALOR-NZ:VALOR"
+            let mut rule_string = String::new();
+            let mut indice:usize=0;
+            for part in rule {
+                
+                rule_string.push_str(&format!("{}=(", nomenclature[indice]));
+                for header_values in part {
+                    rule_string.push_str(&format!("{}:{} - ", header_values[0], header_values[1]));
+                }
+                indice += 1;
+                rule_string.truncate(rule_string.len() - 3);
+                rule_string.push_str(") & ");
+                
+            }
+            rule_string.truncate(rule_string.len() - 3);
+            //IMPRIMIMOS LA REGLA DE ASOCIACIÓN
+            println!("{}", rule_string);
+            //SO:
+            
+            //AHORA SÍ, CALCULAMOS EL SOPORTE, CONFIANZA Y LIFT DE LA REGLA DE ASOCIACIÓN
+            //PARA CALCULAR EL NX, RECORREMOS EL rule[0].
+            //PARA CALCULAR EL NY, RECORREMOS EL rule[1]
+            for part in rule {
+                //PARA CADA PAR HEADER-VALOR EN LA REGLA DE ASOCIACIÓN
+                let mut set_of_headers: Vec<String> = Vec::new();
+                let mut set_of_values: Vec<String> = Vec::new();
+                for header_value in part{
+                    set_of_headers.push(header_value[0].clone());
+                    set_of_values.push(header_value[1].clone());
+                }
+                println!("HEADERS: {:?}", set_of_headers);
+
+                let ocurrences_combined = recursive_filter_combined_occurrences(
+                    vec![&df, &df],
+                    vec![(set_of_headers[0].clone(), set_of_values[0].clone()), (set_of_headers[1].clone(), set_of_values[1].clone())]
+                );
+                let nx = ocurrences_combined.get(&set_of_headers[0]).unwrap().len();
+                println!("NX: {}", nx);
+                println!("");
+            }
+
+            
+        }
+        // for rule in &unbundled_rules {
+        //     //CADA RULE CONTIENE N HEADERS Y N VALORES.
+        // }
+
     }
 
 
@@ -95,17 +158,40 @@ fn main() {
 }
 //FUNCIONES
 
-fn get_rules_info(rules: &Vec<String>) -> Vec<Vec<String>> {
-    let mut rules_info: Vec<Vec<String>> = Vec::new();
-    for rule in rules {
-        let rule_info: Vec<String> = rule.split("-").map(|s| s.to_string()).collect();
-        rules_info.push(rule_info);
+//FUNCION QUE RECIVE UN VEC<VEC<VEC<STRING>>> Y DEVUELVE UN VEC<VEC<VEC<VEC<STRING>>>>
+//TOMA ESE VEC<VEC<VEC<STRING>>> Y REALIZA LA COMBINATORIA DE CADA VEC<VEC<STRING>> Y DEVUELVE UN VEC<VEC<VEC<VEC<STRING>
+fn combine_superior_rules(rules: &Vec<Vec<Vec<String>>>) -> Vec<Vec<Vec<Vec<String>>>> {
+    let mut combined_rules: Vec<Vec<Vec<Vec<String>>>> = Vec::new();
+
+    for i in 0..rules.len() {
+        for j in i + 1..rules.len() {
+            let mut combined_rule: Vec<Vec<Vec<String>>> = Vec::new();
+            combined_rule.push(rules[i].clone());
+            combined_rule.push(rules[j].clone());
+            combined_rules.push(combined_rule);
+        }
     }
-    rules_info
+
+    combined_rules
+}
+
+fn get_rules_info(rules: &Vec<String>) -> Vec<Vec<Vec<String>>> {
+    let mut rules_values: Vec<Vec<Vec<String>>> = Vec::new();
+    for rule in rules {
+        let rule_header: Vec<String> = rule.split("-").map(|s| s.to_string()).collect();
+        let mut rule_values: Vec<Vec<String>> = Vec::new();
+        for header in &rule_header {
+            let header_values: Vec<String> = header.split(":").map(|s| s.to_string()).collect();    
+            rule_values.push(header_values);
+        }
+        rules_values.push(rule_values);
+    }
+    // println!("\nVALUES: {:?}", rules_values);
+    rules_values
 }
 
 // FUNCION QUE DEVUELVE UN DATAFRAME CON LAS OCURRENCIAS DE UNA COMBINACIÓN DE VALORES EN DOS DATAFRAMES
-fn filter_combined_occurrences(
+fn _filter_combined_occurrences(
     df1: &HashMap<String, Vec<String>>,
     df2: &HashMap<String, Vec<String>>,
     header1: &String,
@@ -128,6 +214,47 @@ fn filter_combined_occurrences(
         }
     }
     
+    result
+}
+
+fn recursive_filter_combined_occurrences(
+    dfs: Vec<&HashMap<String, Vec<String>>>,
+    conditions: Vec<(String, String)>
+) -> HashMap<String, Vec<String>> {
+    let mut result: HashMap<String, Vec<String>> = HashMap::new();
+
+    // Inicializa las columnas en el nuevo dataframe
+    for (header, _) in &conditions {
+        result.insert(header.clone(), Vec::new());
+    }
+
+    if !conditions.is_empty() {
+        let (header, value) = &conditions[0];
+        if let Some(values) = dfs[0].get(header) {
+            for (i, val) in values.iter().enumerate() {
+                if val == value {
+                    let mut match_found = true;
+                    for (j, (header_j, value_j)) in conditions.iter().enumerate().skip(1) {
+                        if let Some(values_j) = dfs[j].get(header_j) {
+                            if values_j.get(i) != Some(value_j) {
+                                match_found = false;
+                                break;
+                            }
+                        } else {
+                            match_found = false;
+                            break;
+                        }
+                    }
+                    if match_found {
+                        for (header_k, _) in &conditions {
+                            result.get_mut(header_k).unwrap().push(dfs[0].get(header_k).unwrap()[i].clone());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     result
 }
 
